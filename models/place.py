@@ -64,23 +64,15 @@ class Place(BaseModel, Base):
     if getenv("HBNB_TYPE_STORAGE", None) != "db":
         @property
         def reviews(self):
-            """Get a list of all linked Reviews."""
-            review_list = []
-            for review in list(models.storage.all(Review).values()):
-                if review.place_id == self.id:
-                    review_list.append(review)
-            return review_list
+            """Get a list of all linked."""
+            return [review for review in storage.all(Review).values() if review.place_id == self.id]
 
         @property
         def amenities(self):
             """Get/set linked Amenities."""
-            amenity_list = []
-            for amenity in list(models.storage.all(Amenity).values()):
-                if amenity.id in self.amenity_ids:
-                    amenity_list.append(amenity)
-            return amenity_list
+            return [amenity for amenity in storage.all(Amenity).values() if amenity.id in self.amenity_ids]
 
         @amenities.setter
         def amenities(self, value):
-            if type(value) == Amenity:
-                self.amenity_ids.append(value.id)
+            if isinstance(value, Amenity):
+            self.amenity_ids.append(value.id)
