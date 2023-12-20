@@ -25,18 +25,20 @@ class BaseModel:
     updated_at = Column(DateTime, nullable=False, default=datetime.utcnow())
 
     def __init__(self, *args, **kwargs):
-        """Initialize a new BaseModel.
-
-        Args:
-            *args (any): Unused.
-            **kwargs (dict): Key/value pairs of attributes.
+        """Initialize a new BaseMode
         """
         self.id = str(uuid4())
         self.created_at = self.updated_at = datetime.utcnow()
+
+        datetime_keys = {"created_at", "updated_at"}
+
         if kwargs:
             for key, value in kwargs.items():
-                if key == "created_at" or key == "updated_at":
-                    value = datetime.strptime(value, "%Y-%m-%dT%H:%M:%S.%f")
+                if key in datetime_keys:
+                    try:
+                        value = datetime.strptime(value, "%Y-%m-%dT%H:%M:%S.%f")
+                    except (ValueError, TypeError):
+                        pass
                 if key != "__class__":
                     setattr(self, key, value)
 
