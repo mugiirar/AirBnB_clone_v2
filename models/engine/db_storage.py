@@ -18,9 +18,6 @@ from sqlalchemy.orm import sessionmaker
 class DBStorage:
     """Represents a database storage engine.
 
-    Attributes:
-        __engine (sqlalchemy.Engine): The working SQLAlchemy engine.
-        __session (sqlalchemy.Session): The working SQLAlchemy session.
     """
 
     __engine = None
@@ -28,14 +25,17 @@ class DBStorage:
 
     def __init__(self):
         """Initialize a new DBStorage instance."""
-        self.__engine = create_engine("mysql+mysqldb://{}:{}@{}/{}".
-                                      format(getenv("HBNB_MYSQL_USER"),
-                                             getenv("HBNB_MYSQL_PWD"),
-                                             getenv("HBNB_MYSQL_HOST"),
-                                             getenv("HBNB_MYSQL_DB")),
-                                      pool_pre_ping=True)
+        self.__engine = self.__create_engine()
         if getenv("HBNB_ENV") == "test":
             Base.metadata.drop_all(self.__engine)
+
+    def __create_engine(self):
+        return create_engine("mysql+mysqldb://{}:{}@{}/{}".
+                             format(getenv("HBNB_MYSQL_USER"),
+                                    getenv("HBNB_MYSQL_PWD"),
+                                    getenv("HBNB_MYSQL_HOST"),
+                                    getenv("HBNB_MYSQL_DB")),
+                             pool_pre_ping=True)
 
     def all(self, cls=None):
         """Query on the curret database session all objects of the given class.
