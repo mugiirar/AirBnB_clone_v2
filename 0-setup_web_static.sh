@@ -1,24 +1,13 @@
 #!/usr/bin/env bash
-# Prepare web servers
+# Sets up a web server for deployment of web_static.
 
 apt-get update
 apt-get install -y nginx
 
-mkdir -p /data/
-mkdir -p /data/web_static/
-mkdir -p /data/web_static/releases/
-mkdir -p /data/web_static/shared/
 mkdir -p /data/web_static/releases/test/
-echo "Hello you" > /data/web_static/releases/test/index.html
-
-link_path="/data/web_static/current"
-target_path="/data/web_static/releases/test"
-
-if [ -L "$link_path" ]; then
-    rm "$link_path"
-fi
-
-ln -s "$target_path" "$link_path"
+mkdir -p /data/web_static/shared/
+echo "Holberton School" > /data/web_static/releases/test/index.html
+ln -sf /data/web_static/releases/test/ /data/web_static/current
 
 chown -R ubuntu /data/
 chgrp -R ubuntu /data/
