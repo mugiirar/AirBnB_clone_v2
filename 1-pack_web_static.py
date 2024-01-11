@@ -1,27 +1,22 @@
 #!/usr/bin/python3
-
-"""python script that makes an archive.
-"""
+# Fabfile to generates a .tgz archive from the contents of web_static.
+import os.path
 from datetime import datetime
-from os import path
-from fabfile import *
+from fabric.api import local
 
 
 def do_pack():
-    """packing the files.
-    """
-    tm = datetime.utcnow()
-
-    file =  "versions/web_static_{}{}{}{}{}{}.tgz".format(dt.year,dt.month, dt.day, dt.hour, dt.minute, dt.second)
-
-    directory_path = "versions"
-
-    if not os.path.isdir(directory_path):
-        try:
-            os.makedirs(directory_path)
-        except OSError as e:
+    """Create a tar gzipped archive of the directory web_static."""
+    dt = datetime.utcnow()
+    file = "versions/web_static_{}{}{}{}{}{}.tgz".format(dt.year,
+                                                         dt.month,
+                                                         dt.day,
+                                                         dt.hour,
+                                                         dt.minute,
+                                                         dt.second)
+    if os.path.isdir("versions") is False:
+        if local("mkdir -p versions").failed is True:
             return None
-
     if local("tar -cvzf {} web_static".format(file)).failed is True:
         return None
     return file
