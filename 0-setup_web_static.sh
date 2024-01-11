@@ -1,6 +1,9 @@
 #!/usr/bin/env bash
 # Prepare web servers
 
+apt-get update
+apt-get install -y nginx
+
 mkdir -p /data/
 mkdir -p /data/web_static/
 mkdir -p /data/web_static/releases/
