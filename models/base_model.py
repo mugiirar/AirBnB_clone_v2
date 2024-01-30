@@ -25,20 +25,18 @@ class BaseModel:
     updated_at = Column(DateTime, nullable=False, default=datetime.utcnow())
 
     def __init__(self, *args, **kwargs):
-        """Initialize a new BaseMode
+        """Initialize a new BaseModel.
+
+        Args:
+            *args (any): Unused.
+            **kwargs (dict): Key/value pairs of attributes.
         """
         self.id = str(uuid4())
         self.created_at = self.updated_at = datetime.utcnow()
-
-        datetime_keys = {"created_at", "updated_at"}
-
         if kwargs:
             for key, value in kwargs.items():
-                if key in datetime_keys:
-                    try:
-                        value = datetime.strptime(value, "%Y-%m-%dT%H:%M:%S.%f")
-                    except (ValueError, TypeError):
-                        pass
+                if key == "created_at" or key == "updated_at":
+                    value = datetime.strptime(value, "%Y-%m-%dT%H:%M:%S.%f")
                 if key != "__class__":
                     setattr(self, key, value)
 
@@ -50,13 +48,15 @@ class BaseModel:
 
     def to_dict(self):
         """Return a dictionary representation of the BaseModel instance.
+
+        Includes the key/value pair __class__ representing
+        the class name of the object.
         """
-        my_dict = {
-        key: value.isoformat() if isinstance(value, datetime) else value
-        for key, value in self.__dict__.items()
-        if key != "_sa_instance_state"
-        }
+        my_dict = self.__dict__.copy()
         my_dict["__class__"] = str(type(self).__name__)
+        my_dict["created_at"] = self.created_at.isoformat()
+        my_dict["updated_at"] = self.updated_at.isoformat()
+        my_dict.pop("_sa_instance_state", None)
         return my_dict
 
     def delete(self):
